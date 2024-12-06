@@ -36,8 +36,11 @@ class PreparerPoolpsCsv():
         self.pulpas_df = None
 
     # data load func
-    def load_dataset(self, path_to_data: str) -> None:
-        self.data = get_data(path_to_data)
+    def load_dataset(self, data: str or pd.DataFrame) -> None:
+        if isinstance(data, str):
+            self.data = get_data(data)
+        elif isinstance(data, pd.DataFrame):
+            self.data = data
 
     # pulpas df preparer
     def prepare_pulpas_dataset(self) -> None:
@@ -75,7 +78,7 @@ class PreparerPoolpsCsv():
                 axis=1)
             pulpa_1 = pd.DataFrame([[row[x] for x in self.FEATURES_PUPLA_1]], columns=self.FEATURES_PUPLA_1)
 
-        self.pulpas_df = pd.concat(results, axis=0)
+        self.pulpas_df = pd.concat(results, axis=0).reset_index(level=0, drop=True)
 
     # return pulpas df
     def get_pulpas_df(self) -> pd.DataFrame:
