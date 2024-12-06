@@ -1,0 +1,11 @@
+nikelenv/
+data/
+
+app/__pycache__/
+
+.env
+
+app/crud.py
+app/database.py
+app/schemas.py
+app/db_models.py
