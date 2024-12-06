@@ -30,18 +30,44 @@
 #     return user
 
 
-from fastapi import FastAPI
+from io import BytesIO
+import json  # For file storage
+from fastapi import FastAPI, File, UploadFile
 import asyncio
 from .telegram_bot import *
 
 app = FastAPI()
-dp = Dispatcher(bot)
-dp.include_router(router)
 
-@app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(dp.start_polling())
+@app.post("/upload-csv/")
+async def upload_csv(file: UploadFile = File(...)):
+    """Обработка загрузки CSV через FastAPI."""
+    if not file.filename.endswith(".csv"):
+        return {"error": "Please upload a CSV file."}
 
-@app.get("/")
-def read_root():
-    return {"message": "Сервер работает! Telegram-бот запущен."}
+    content = await file.read()
+    df = pd.read_csv(BytesIO(content))
+
+    # Добавляем пример обработки (можно настроить)
+    df["Processed"] = "Example"
+
+    # Создаем и возвращаем обработанный файл
+    output = BytesIO()
+    df.to_csv(output, index=False)
+    output.seek(0)
+
+    return {"filename": "processed_file.csv", "file_content": output.getvalue()}
+
+
+async def main():
+    dp = Dispatcher()
+    dp.include_router(router)
+
+    # Установка панели команд
+    await set_bot_commands()
+
+    # Запуск поллинга
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
