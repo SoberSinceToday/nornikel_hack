@@ -33,41 +33,60 @@
 from io import BytesIO
 import json  # For file storage
 from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import FileResponse
 import asyncio
-from .telegram_bot import *
+import pandas as pd
+import uvicorn
+import numpy as np
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"Status code": "200"}
+
 @app.post("/upload-csv/")
 async def upload_csv(file: UploadFile = File(...)):
-    """Обработка загрузки CSV через FastAPI."""
-    if not file.filename.endswith(".csv"):
+    """Обработка загрузки CSV и возвращение изменённого файла."""
+    if not file or not file.filename.endswith(".csv"):
         return {"error": "Please upload a CSV file."}
 
-    content = await file.read()
-    df = pd.read_csv(BytesIO(content))
+    # Чтение содержимого файла
+    try:
+        content = await file.read()
+        data = pd.read_csv(BytesIO(content))
+    except Exception as e:
+        return {"error": f"Error while reading CSV file: {e}"}
 
-    # Добавляем пример обработки (можно настроить)
-    df["Processed"] = "Example"
+    # Обработка данных
+    try:
+        # data = data[(data['Ni_rec'] < 1) & (data['Ni_rec'] > 0)]
+        data['Ni_rec'] = np.random.uniform(0, 1, size=len(data))
+        data["Processed"] = "Example"
+    except Exception as e:
+        return {"error": f"Error while processing CSV file: {e}"}
 
-    # Создаем и возвращаем обработанный файл
-    output = BytesIO()
-    df.to_csv(output, index=False)
-    output.seek(0)
+    # Сохранение обработанного файла
+    try:
+        output_filename = "processed_file.csv"
+        data.to_csv(output_filename, index=False)
+    except Exception as e:
+        return {"error": f"Error while saving processed CSV file: {e}"}
 
-    return {"filename": "processed_file.csv", "file_content": output.getvalue()}
+    # Возвращение файла как ответа
+    try:
+        return FileResponse(
+            path=output_filename,
+            filename="processed_file.csv",
+            media_type="text/csv"
+        )
+    except Exception as e:
+        return {"error": f"Error while returning processed CSV file: {e}"}
 
 
-async def main():
-    dp = Dispatcher()
-    dp.include_router(router)
 
-    # Установка панели команд
-    await set_bot_commands()
-
-    # Запуск поллинга
-    await dp.start_polling(bot)
-
+def main():
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
