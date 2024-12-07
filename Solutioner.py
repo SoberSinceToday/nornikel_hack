@@ -1,7 +1,4 @@
-import pandas as pd
-import numpy as np
 from utils import *
-from models.ni_rec_predictor import NiRecPredictor
 
 
 # Define constants

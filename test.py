@@ -1,8 +1,5 @@
-import pandas as pd
-
 from PreparerPoolpsCsv import PreparerPoolpsCsv
 from Solutioner import Solutioner
-from models.ni_rec_predictor import NiRecPredictor
 import warnings
 
 # Отключаем все предупреждения
