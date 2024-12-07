@@ -39,7 +39,7 @@ TEST_PARAMS = [
     'Ni_6.2T_min', 'Ni_6.2T_max', 'Ni_6.2C_min', 'Ni_6.2C_max'
 ]
 
-ITERS = 100  # Итерации для моделей
+ITERS = 20  # Итерации для моделей
 
 
 # data reading
@@ -124,12 +124,12 @@ def fit_models(inp: list, params: list, out: list, pulpas_df: pd.DataFrame, test
     cr, cc = 0, 0
     for param in regressions_params.keys():
         test_df[param] = regressions_params[param].predict(test_df[inp])
-        regressions_params[param].save_model(f'./models/regression_{cr}_for_feature_{param}')
+        regressions_params[param].save_model(f'./models/regression_{cr}_for_feature_{param}.cbm')
         cr += 1
 
     for param in classifiers_params.keys():
         test_df[param] = pd.DataFrame(classifiers_params[param].predict(test_df[inp]).flatten().astype(float))
-        classifiers_params[param].save_model(f'./models/classifier_{cc}_for_feature{param}')
+        classifiers_params[param].save_model(f'./models/classifier_{cc}_for_feature{param}.cbm')
         cc += 1
 
     for f in CAT_FEATURES:
@@ -137,7 +137,7 @@ def fit_models(inp: list, params: list, out: list, pulpas_df: pd.DataFrame, test
 
     for param in model_target.keys():
         test_df[param] = model_target[param].predict(test_df[inp + params])
-        model_target[param].save_model(f'./models/regression_{cr}_for_feature_{param}')
+        model_target[param].save_model(f'./models/regression_{cr}_for_feature_{param}.cbm')
         cr += 1
     return test_df
 
