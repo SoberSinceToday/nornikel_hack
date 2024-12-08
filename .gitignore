@@ -1,0 +1,17 @@
+nikelenv/
+data/
+
+app/__pycache__/
+ai/__pycache__/
+
+.env
+
+app/crud.py
+app/database.py
+app/schemas.py
+app/db_models.py
+app/telegram_bot.py
+
+processed_file.csv
+
+catboost_info/
