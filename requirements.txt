@@ -3,3 +3,4 @@ fastapi
 catboost
 numpy
 uvicorn
+python-multipart

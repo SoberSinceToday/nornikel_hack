@@ -39,7 +39,7 @@ TEST_PARAMS = [
     'Ni_6.2T_min', 'Ni_6.2T_max', 'Ni_6.2C_min', 'Ni_6.2C_max'
 ]
 
-ITERS = 1  # Итерации для моделей
+ITERS = 100  # Итерации для моделей
 
 
 # data reading
