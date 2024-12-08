@@ -12,6 +12,8 @@ app/schemas.py
 app/db_models.py
 app/telegram_bot.py
 
-processed_file.csv
-
 catboost_info/
+
+processed_file.csv
+data.csv
+ans.csv
