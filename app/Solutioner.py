@@ -60,6 +60,11 @@ class Solutioner:
         self.TARGET = 'Ni_rec'
 
     def get_filled_table(self):
+        '''
+        Объединение данных:
+        Объединяет тестовые и обучающие данные на основе временной метки (MEAS_DT).
+        Упорядочивает столбцы тестового набора, чтобы они совпадали с обучающим.
+        '''
         self.test_df = pd.merge(self.train_df[['MEAS_DT', 'Cu_oreth', 'Ni_oreth', 'Ore_mass']], self.test_df,
                                 on='MEAS_DT',
                                 how='inner')
@@ -108,6 +113,10 @@ class Solutioner:
         return self.test_df
 
     def get_ans(self):
+        '''
+        Получение таблицы с прогнозами:
+        Вызывает метод get_filled_table для выполнения всех этапов обработки.
+        '''
         df = self.get_filled_table()
         df = transfrom_ans(df)[5:-6]  # откидываем добавленные 5 строчек сверху и снизу
         return fill_params(df)
