@@ -27,8 +27,9 @@ async def upload_csv(file: UploadFile = File(...)):
     try:
         content = await file.read()
         data = pd.read_csv(BytesIO(content))
+        data.to_csv('data.csv')
         preparer = PreparerPoolpsCsv()
-        preparer.load_dataset(data)  # Передача содержимого как строки
+        preparer.load_dataset('data/df_hack_final.csv') # Передача содержимого как строки
         preparer.prepare_pulpas_dataset()
         df = preparer.get_pulpas_df()
 
@@ -37,18 +38,18 @@ async def upload_csv(file: UploadFile = File(...)):
 
     # Обработка данных
     try:
-        s = Solutioner(path_to_test_data='data/test.csv',
+        s = Solutioner(path_to_test_data='data.csv',
             path_to_train='data/df_hack_final.csv',
             pulpas_df=df)
         ans = s.get_ans()
-        
+        ans.to_csv('ans.csv')
     except Exception as e:
         return {"error": f"Error while processing CSV file: {e}"}
 
     # Сохранение обработанного файла
     try:
         output_filename = "processed_file.csv"
-        df.to_csv(output_filename, index=False)
+        ans.to_csv(output_filename, index=False)
     except Exception as e:
         return {"error": f"Error while saving processed CSV file: {e}"}
 
